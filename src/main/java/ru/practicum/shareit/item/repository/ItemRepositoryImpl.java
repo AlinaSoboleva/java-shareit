@@ -16,18 +16,18 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Autowired
     private UserRepository userRepository;
 
-    private final Map<Long, Item> ITEMS = new HashMap<>();
+    private final Map<Long, Item> items = new HashMap<>();
     private Long id = 0L;
 
     @Override
     public Item getById(Long id) {
-        return ITEMS.get(id);
+        return items.get(id);
     }
 
     @Override
     public List<Item> findByUserId(Long userId) {
         userRepository.validateUserId(userId);
-        return ITEMS.values().stream()
+        return items.values().stream()
                 .filter(item -> item.getUserId().equals(userId))
                 .collect(Collectors.toList());
     }
@@ -37,7 +37,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         userRepository.validateUserId(userId);
         item.setId(++id);
         item.setUserId(userId);
-        ITEMS.put(id, item);
+        items.put(id, item);
         return item;
     }
 
@@ -46,7 +46,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         userRepository.validateUserId(userId);
         validateItemId(itemId);
         validateItemUserId(userId, itemId);
-        Item updatedItem = ITEMS.get(itemId);
+        Item updatedItem = items.get(itemId);
         updatedItem.setAvailable(item.getAvailable() == null ? updatedItem.getAvailable() : item.getAvailable());
         updatedItem.setName(item.getName() == null ? updatedItem.getName() : item.getName());
         updatedItem.setDescription(item.getDescription() == null ? updatedItem.getDescription() : item.getDescription());
@@ -58,7 +58,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public void deleteItem(Long itemId, Long userId) {
         userRepository.validateUserId(userId);
         validateItemId(itemId);
-        ITEMS.remove(itemId);
+        items.remove(itemId);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        return ITEMS.values().stream().filter(Item::getAvailable)
+        return items.values().stream().filter(Item::getAvailable)
                 .filter(item ->
                         item.getName().toLowerCase().contains(text.toLowerCase()) ||
                                 item.getDescription().toLowerCase().contains(text.toLowerCase()))
@@ -74,7 +74,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     private void validateItemId(Long itemId) {
-        if (ITEMS.values()
+        if (items.values()
                 .stream()
                 .anyMatch(item -> item.getId().equals(itemId))) {
             return;
@@ -83,7 +83,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     private void validateItemUserId(Long userId, Long itemId) {
-        if (ITEMS.get(itemId).getUserId().equals(userId)) {
+        if (items.get(itemId).getUserId().equals(userId)) {
             return;
         }
         throw new ItemDoesNotBelongToUserException(String.format("Предмет с id %d не принадлежит пользователю с id %d", itemId, userId));

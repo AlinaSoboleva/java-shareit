@@ -12,32 +12,32 @@ import java.util.Map;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    private final Map<Long, User> USERS = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
     private Long id = 0L;
 
     @Override
     public Collection<User> getAllUsers() {
-        return USERS.values();
+        return users.values();
     }
 
     @Override
     public User getById(Long id) {
         validateUserId(id);
-        return USERS.get(id);
+        return users.get(id);
     }
 
     @Override
     public User saveUser(User user) {
         validateUserEmail(user.getId(), user.getEmail());
         user.setId(++id);
-        USERS.put(id, user);
+        users.put(id, user);
         return user;
     }
 
     @Override
     public User updateUser(Long userId, User user) {
         validateUserEmail(userId, user.getEmail());
-        User updatedUser = USERS.get(userId);
+        User updatedUser = users.get(userId);
         updatedUser.setName(user.getName() == null ? updatedUser.getName() : user.getName());
         updatedUser.setEmail(user.getEmail() == null ? updatedUser.getEmail() : user.getEmail());
         return updatedUser;
@@ -46,11 +46,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void deleteUser(Long userId) {
         validateUserId(userId);
-        USERS.remove(userId);
+        users.remove(userId);
     }
 
     private void validateUserEmail(Long userId, String email) {
-        if (USERS.values()
+        if (users.values()
                 .stream()
                 .filter(user -> !user.getId().equals(userId))
                 .anyMatch(user -> user.getEmail().equalsIgnoreCase(email))) {
@@ -59,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     public void validateUserId(Long userId) {
-        if (USERS.values()
+        if (users.values()
                 .stream()
                 .anyMatch(user -> user.getId().equals(userId))) {
             return;

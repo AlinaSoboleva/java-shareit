@@ -22,11 +22,13 @@ public class ItemController {
 
     @GetMapping
     public Collection<Item> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Получение всех вещей пользователя {}", userId);
         return itemService.getItemsByUser(userId);
     }
 
     @GetMapping("/search")
     public Collection<Item> getItemsSearch(@RequestParam String text) {
+        log.info("Поиск вещей: {}", text);
         return itemService.getItemsSearch(text);
     }
 
@@ -43,7 +45,9 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public Item updateItem(@RequestBody Item item, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Item updateItem(@RequestBody Item item, @PathVariable Long itemId,
+                           @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Изменение предмета с id {} у пользователя {}", itemId, userId);
         return itemService.updateItem(item, itemId, userId);
     }
 

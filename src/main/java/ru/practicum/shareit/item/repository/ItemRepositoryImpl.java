@@ -16,7 +16,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Autowired
     private UserRepository userRepository;
 
-    private Map<Long, Item> ITEMS = new HashMap<>();
+    private final Map<Long, Item> ITEMS = new HashMap<>();
     private Long id = 0L;
 
     @Override

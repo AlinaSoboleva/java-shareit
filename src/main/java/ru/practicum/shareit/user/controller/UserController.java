@@ -33,18 +33,20 @@ public class UserController {
     }
 
     @PostMapping
-    public User saveUser(@Valid @RequestBody User user){
+    public User saveUser(@Valid @RequestBody User user) {
         log.info("Сохранение пользователя {}", user);
         return userService.saveUser(user);
     }
 
     @PatchMapping("/{userId}")
-     public User updateUser(@PathVariable Long userId, @RequestBody User user){
+    public User updateUser(@PathVariable Long userId, @RequestBody User user) {
+        log.info("Изменение полей  пользователя с id {}", userId);
         return userService.updateUser(userId, user);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable Long userId){
+    public void deleteUser(@PathVariable Long userId) {
+        log.info("Удаление пользователя {}", userId);
         userService.deleteUser(userId);
     }
 }

@@ -5,8 +5,9 @@ import ru.practicum.shareit.user.exception.UserEmailValidationException;
 import ru.practicum.shareit.user.exception.UserIdValidationException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -16,8 +17,8 @@ public class UserRepositoryImpl implements UserRepository {
     private Long id = 0L;
 
     @Override
-    public Collection<User> getAllUsers() {
-        return users.values();
+    public List<User> getAllUsers() {
+        return new ArrayList<>(users.values());
     }
 
     @Override

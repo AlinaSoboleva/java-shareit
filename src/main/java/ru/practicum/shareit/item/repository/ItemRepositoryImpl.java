@@ -7,7 +7,10 @@ import ru.practicum.shareit.item.exception.ItemIdValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -62,7 +65,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Collection<Item> getItemsSearch(String text) {
+    public List<Item> getItemsSearch(String text) {
         if (text.isBlank()) {
             return Collections.emptyList();
         }

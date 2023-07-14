@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.exception.ItemDoesNotBelongToUserException;
 import ru.practicum.shareit.item.exception.ItemIdValidationException;
@@ -16,8 +15,11 @@ import java.util.stream.Collectors;
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
 
-    @Autowired
     private UserRepository userRepository;
+
+    public ItemRepositoryImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     private final Map<Long, Item> items = new HashMap<>();
     private Long id = 0L;

@@ -19,4 +19,17 @@ public class UserMapperImpl {
 
         return userDto;
     }
+
+    public static User toEntity(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
+        User user = new User();
+
+        user.setId(userDto.getId());
+        user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
+
+        return user;
+    }
 }

@@ -108,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
                 new UserIdValidationException(String.format("Пользователь с id: %s не найден", userId)));
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     @Override
     public CommentDto postComment(CommentDto commentDto, Long itemId, Long userId) {
         User user = userIdValidate(userId);
@@ -127,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsSearch(String text, Long userId) {
-        if (text.isBlank()) {
+        if (text.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
         return itemRepository.findBySearch(text).stream()

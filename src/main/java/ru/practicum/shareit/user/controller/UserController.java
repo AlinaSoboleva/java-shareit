@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
@@ -29,21 +31,22 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserDto getById(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> getById(@PathVariable Long userId) {
         log.info("Получение пользователя с id {}", userId);
-        return userService.getById(userId);
+        return ResponseEntity.ok(userService.getById(userId));
     }
 
     @PostMapping
-    public UserDto saveUser(@Valid @RequestBody UserDto userDto) {
+    @Validated
+    public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) {
         log.info("Сохранение пользователя {}", userDto);
-        return userService.saveUser(userDto);
+        return ResponseEntity.ok(userService.saveUser(userDto));
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
         log.info("Изменение полей  пользователя с id {}", userId);
-        return userService.updateUser(userId, userDto);
+        return ResponseEntity.ok(userService.updateUser(userId, userDto));
     }
 
     @DeleteMapping("/{userId}")

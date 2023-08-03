@@ -5,6 +5,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.booking.exception.BookingException;
+import ru.practicum.shareit.booking.exception.BookingStateException;
+import ru.practicum.shareit.booking.exception.BookingValidException;
+import ru.practicum.shareit.item.exception.CommentException;
 import ru.practicum.shareit.item.exception.ItemDoesNotBelongToUserException;
 import ru.practicum.shareit.item.exception.ItemIdValidationException;
 import ru.practicum.shareit.response.ErrorResponse;
@@ -14,9 +18,9 @@ import ru.practicum.shareit.user.exception.UserIdValidationException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(value = {ItemIdValidationException.class, ItemDoesNotBelongToUserException.class})
+    @ExceptionHandler(value = {ItemIdValidationException.class, ItemDoesNotBelongToUserException.class, BookingValidException.class, UserIdValidationException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleIdException(final RuntimeException e) {
+    public ErrorResponse handleItemIdException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -27,14 +31,14 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleIdException(final UserIdValidationException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIdException(final MethodArgumentNotValidException e) {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({BookingException.class, BookingStateException.class, CommentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIdException(final MethodArgumentNotValidException e) {
+    public ErrorResponse handleBookingException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 

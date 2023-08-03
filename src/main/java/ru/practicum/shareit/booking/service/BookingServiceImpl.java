@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.enumeration.Status;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -36,6 +38,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
 
+    @Transactional
     @Override
     public BookingDtoResponse saveBooking(BookingDtoRequest bookingDtoRequest, Long userId) {
         User user = userService.validateUserId(userId);
@@ -58,6 +61,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional
     @Override
     public BookingDtoResponse approved(Long bookingId, Boolean approved, Long userId) {
         userService.validateUserId(userId);

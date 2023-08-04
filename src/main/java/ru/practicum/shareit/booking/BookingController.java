@@ -40,14 +40,14 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoResponse> getAllBookingsOwners(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<List<BookingDtoResponse>> getAllBookingsOwners(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                          @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingsOwners(userId, state);
+        return ResponseEntity.ok(bookingService.getAllBookingsOwners(userId, state));
     }
 
     @GetMapping
-    public List<BookingDtoResponse> getAllBookingsBookers(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<List<BookingDtoResponse>> getAllBookingsBookers(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                           @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingsBookers(userId, state);
+        return ResponseEntity.ok(bookingService.getAllBookingsBookers(userId, state));
     }
 }

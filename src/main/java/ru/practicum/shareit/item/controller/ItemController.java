@@ -26,16 +26,16 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<List<ItemDto>> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("Получение всех вещей пользователя {}", userId);
-        return itemService.getItemsByUser(userId);
+        return ResponseEntity.ok(itemService.getItemsByUser(userId));
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getItemsSearch(@RequestParam String text,
+    public ResponseEntity<List<ItemDto>> getItemsSearch(@RequestParam String text,
                                         @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Поиск вещей: {}", text);
-        return itemService.getItemsSearch(text, userId);
+        return ResponseEntity.ok(itemService.getItemsSearch(text, userId));
     }
 
 

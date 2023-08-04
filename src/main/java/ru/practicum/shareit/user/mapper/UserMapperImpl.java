@@ -9,13 +9,12 @@ public class UserMapperImpl {
         if (user == null) {
             return null;
         }
-        UserDto userDto = new UserDto();
 
-        userDto.setId(user.getId());
-        userDto.setEmail(user.getEmail());
-        userDto.setName(user.getName());
-
-        return userDto;
+        return UserDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .build();
     }
 
     public static User toEntity(UserDto userDto) {

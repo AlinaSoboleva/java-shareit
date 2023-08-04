@@ -28,27 +28,27 @@ public class BookingMapperImpl {
             return null;
         }
 
-        BookingDto bookingDto = new BookingDto();
-
-        bookingDto.setId(booking.getId());
-        bookingDto.setStart(booking.getStart());
-        bookingDto.setEnd(booking.getEnd());
-        bookingDto.setItem(ItemMapperImpl.toDto(booking.getItem()));
-        bookingDto.setBookerId(booking.getBooker().getId());
-        bookingDto.setStatus(booking.getStatus());
-
-        return bookingDto;
+        return BookingDto.builder()
+                .id(booking.getId())
+                .status(booking.getStatus())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .item(ItemMapperImpl.toDto(booking.getItem()))
+                .bookerId(booking.getBooker().getId())
+                .build();
     }
 
     public static BookingDtoResponse toBookingDtoResponse(Booking booking) {
-        BookingDtoResponse bookingDtoResponse = new BookingDtoResponse();
-        bookingDtoResponse.setId(booking.getId());
-        bookingDtoResponse.setStatus(booking.getStatus());
-        bookingDtoResponse.setStart(booking.getStart());
-        bookingDtoResponse.setEnd(booking.getEnd());
-        bookingDtoResponse.setItem(ItemMapperImpl.toDto(booking.getItem()));
-        bookingDtoResponse.setBooker(UserMapperImpl.toDto(booking.getBooker()));
-        return bookingDtoResponse;
+        if (booking == null) return null;
+
+        return BookingDtoResponse.builder()
+                .id(booking.getId())
+                .status(booking.getStatus())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .item(ItemMapperImpl.toDto(booking.getItem()))
+                .booker(UserMapperImpl.toDto(booking.getBooker()))
+                .build();
     }
 }
 

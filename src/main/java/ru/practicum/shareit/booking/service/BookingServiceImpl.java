@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
@@ -41,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDtoResponse saveBooking(BookingDtoRequest bookingDtoRequest, Long userId) {
-        User user = userService.validateUserId(userId);
+        User user = userService.getUserById(userId);
         Item item = itemRepository.findById(bookingDtoRequest.getItemId()).orElseThrow(() ->
                 new ItemIdValidationException(String.format("Предмет с id %s не найден", bookingDtoRequest.getItemId())));
         if (item.getOwner().getId().equals(userId)) {
@@ -55,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
         try {
             log.info("Сохранение бронирования " + bookingDtoRequest);
             return BookingMapperImpl.toBookingDtoResponse(bookingRepository.save(BookingMapperImpl.toEntity(bookingDtoRequest, item, user)));
-        } catch (DataIntegrityViolationException e) {
+        } catch (Exception e) {
             log.warn("Бронирование не было создано: " + bookingDtoRequest);
             throw new UserIdValidationException("Бронирование не было создано: " + bookingDtoRequest);
         }
@@ -64,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDtoResponse approved(Long bookingId, Boolean approved, Long userId) {
-        userService.validateUserId(userId);
+        userService.getUserById(userId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(()
                 -> new BookingException("Бронирование не найденно " + bookingId));
         Item item = booking.getItem();
@@ -89,7 +88,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoResponse getBookingById(Long bookingId, Long userId) {
-        userService.validateUserId(userId);
+        userService.getUserById(userId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingValidException("Бронирование не найденно"));
         if (!booking.getItem().getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
@@ -102,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> getAllBookingsOwners(Long userId, String state) {
-        User user = userService.validateUserId(userId);
+        User user = userService.getUserById(userId);
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings;
         switch (state.toUpperCase()) {
@@ -134,7 +133,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoResponse> getAllBookingsBookers(Long userId, String state) {
-        userService.validateUserId(userId);
+        userService.getUserById(userId);
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings;
         switch (state.toUpperCase()) {

@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(Long id) {
-        return UserMapperImpl.toDto(validateUserId(id));
+        return UserMapperImpl.toDto(getUserById(id));
     }
 
     @Override
@@ -38,7 +37,7 @@ public class UserServiceImpl implements UserService {
         try {
             User user = userRepository.save(UserMapperImpl.toEntity(userDto));
             return UserMapperImpl.toDto(user);
-        } catch (DataIntegrityViolationException e) {
+        } catch (Exception e) {
             log.warn("Пользователь не был создан {}", userDto);
             throw new UserEmailValidationException("Пользователь не был создан: " + userDto);
         }
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
-        User user = validateUserId(userId);
+        User user = getUserById(userId);
 
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
@@ -62,12 +61,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }
 
     @Override
-    public User validateUserId(Long userId) {
+    public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new UserIdValidationException(String.format("Пользователь c id: %s не найден", userId)));
     }

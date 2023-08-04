@@ -45,7 +45,6 @@ public class ItemServiceImpl implements ItemService {
         userIdValidate(userId);
         Item item = itemRepository.findById(id).orElseThrow(() ->
                 new ItemIdValidationException(String.format("Предмет с id: %s не найдена", id)));
-        LocalDateTime now = LocalDateTime.now();
         Booking nextBooking = null;
         Booking lastBooking = null;
         if (item.getOwner().getId().equals(userId)) {
@@ -78,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ItemIdValidationException(String.format("Предмет с id: %s не найдена", itemId)));
-        User user = userIdValidate(userId);
+        userIdValidate(userId);
         if (!item.getOwner().getId().equals(userId)) {
             throw new ItemDoesNotBelongToUserException(String.format("Пользователь с id = " + userId +
                     " не является владельцем вещи: " + itemDto));
@@ -99,6 +98,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void deleteItem(Long itemId, Long userId) {
         itemRepository.deleteById(itemId);
     }

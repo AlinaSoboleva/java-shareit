@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking.mapper;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
@@ -12,8 +10,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapperImpl;
 import ru.practicum.shareit.user.model.User;
 
-@Component
-@AllArgsConstructor
 public class BookingMapperImpl {
     public static Booking toEntity(BookingDtoRequest bookingDtoRequest, Item item, User user) {
         if (bookingDtoRequest == null) return null;

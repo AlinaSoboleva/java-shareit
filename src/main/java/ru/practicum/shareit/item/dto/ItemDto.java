@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class ItemDto {
     private Long id;
-    private Long userId;
+
     @NotEmpty
     @NotNull
     private String name;
@@ -23,4 +23,5 @@ public class ItemDto {
     @NotNull
     private Boolean available;
     private Long request;
+
 }

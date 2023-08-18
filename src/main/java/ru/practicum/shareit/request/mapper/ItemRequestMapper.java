@@ -13,12 +13,16 @@ import java.util.stream.Collectors;
 public abstract class ItemRequestMapper {
 
     public static ItemRequestDto toDto(ItemRequest itemRequest) {
-        return ItemRequestDto.builder()
-                .id(itemRequest.getId())
-                .description(itemRequest.getDescription())
-                .created(itemRequest.getCreated())
-                .items(itemRequest.getItems().stream().map(ItemMapperImpl::toDto).collect(Collectors.toSet()))
-                .build();
+        if (itemRequest == null) return null;
+
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
+
+        itemRequestDto.setId(itemRequest.getId());
+        itemRequestDto.setDescription(itemRequest.getDescription());
+        itemRequestDto.setCreated(itemRequest.getCreated());
+        itemRequestDto.setItems(itemRequest.getItems().stream().map(ItemMapperImpl::toDto).collect(Collectors.toSet()));
+
+        return itemRequestDto;
     }
 
     public static ItemRequest toEntity(ItemRequestDto itemRequestDto, User requestor) {

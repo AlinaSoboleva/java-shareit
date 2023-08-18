@@ -32,7 +32,7 @@ class ItemRequestControllerTest {
 
     @BeforeEach
     void setUp() {
-        itemRequestDto = ItemRequestDto.builder().build();
+        itemRequestDto = new ItemRequestDto();
     }
 
     @Test

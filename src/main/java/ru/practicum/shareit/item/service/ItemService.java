@@ -14,9 +14,9 @@ public interface ItemService {
 
     void deleteItem(Long itemId, Long userId);
 
-    List<ItemDto> getItemsByUser(Long userId);
+    List<ItemDto> getItemsByUser(Long userId, Integer from, Integer size);
 
-    List<ItemDto> getItemsSearch(String text, Long userId);
+    List<ItemDto> getItemsSearch(String text, Long userId, Integer from, Integer size);
 
     CommentDto postComment(CommentDto commentDto, Long itemId, Long userId);
 }

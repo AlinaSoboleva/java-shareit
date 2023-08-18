@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -11,6 +13,8 @@ import javax.validation.constraints.NotNull;
  */
 @Setter
 @Getter
+@EqualsAndHashCode
+@ToString
 public class ItemDto {
     private Long id;
 
@@ -22,6 +26,6 @@ public class ItemDto {
     private String description;
     @NotNull
     private Boolean available;
-    private Long request;
+    private Long requestId;
 
 }

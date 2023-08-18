@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.exception.BookingValidException;
 import ru.practicum.shareit.item.exception.CommentException;
 import ru.practicum.shareit.item.exception.ItemDoesNotBelongToUserException;
 import ru.practicum.shareit.item.exception.ItemIdValidationException;
+import ru.practicum.shareit.request.exception.RequestIdValidationException;
 import ru.practicum.shareit.response.ErrorResponse;
 import ru.practicum.shareit.user.exception.UserEmailValidationException;
 import ru.practicum.shareit.user.exception.UserIdValidationException;
@@ -18,7 +19,7 @@ import ru.practicum.shareit.user.exception.UserIdValidationException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(value = {ItemIdValidationException.class, ItemDoesNotBelongToUserException.class, BookingValidException.class, UserIdValidationException.class})
+    @ExceptionHandler(value = {ItemIdValidationException.class, ItemDoesNotBelongToUserException.class, BookingValidException.class, UserIdValidationException.class, RequestIdValidationException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleItemIdException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());

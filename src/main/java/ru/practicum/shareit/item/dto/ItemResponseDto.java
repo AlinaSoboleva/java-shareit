@@ -1,10 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
 import java.util.List;
@@ -13,7 +10,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
-public class ItemDaoResponse extends ItemDto {
+@EqualsAndHashCode
+public class ItemResponseDto extends ItemDto {
 
     private BookingDto nextBooking;
     private BookingDto lastBooking;

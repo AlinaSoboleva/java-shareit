@@ -34,7 +34,7 @@ public class BookingMapperImpl {
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .item(ItemMapperImpl.toDto(booking.getItem()))
-                .bookerId(booking.getBooker().getId())
+                .bookerId(booking.getBooker() == null ? null : booking.getBooker().getId())
                 .build();
     }
 

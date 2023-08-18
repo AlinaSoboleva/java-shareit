@@ -3,12 +3,15 @@ package ru.practicum.shareit.item.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -17,6 +20,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/items")
+@Validated
 public class ItemController {
 
     private final ItemService itemService;
@@ -26,16 +30,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public ResponseEntity<List<ItemDto>> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                  @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                  @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size) {
         log.info("Получение всех вещей пользователя {}", userId);
-        return ResponseEntity.ok(itemService.getItemsByUser(userId));
+        return ResponseEntity.ok(itemService.getItemsByUser(userId, from, size));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> getItemsSearch(@RequestParam String text,
-                                        @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                        @RequestHeader("X-Sharer-User-Id") Long userId,
+                                                        @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size) {
         log.info("Поиск вещей: {}", text);
-        return ResponseEntity.ok(itemService.getItemsSearch(text, userId));
+        return ResponseEntity.ok(itemService.getItemsSearch(text, userId, from, size));
     }
 
 

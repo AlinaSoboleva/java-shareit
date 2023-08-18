@@ -1,9 +1,10 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @Entity
 public class Item {
 
@@ -30,7 +32,9 @@ public class Item {
     private String description;
     @Column(name = "available")
     private Boolean available;
-    @OneToOne
+    //    @OneToOne
+//    @JoinColumn(name = "request_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 

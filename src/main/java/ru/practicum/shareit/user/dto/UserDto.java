@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Getter
 @ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 public class UserDto {
     private Long id;

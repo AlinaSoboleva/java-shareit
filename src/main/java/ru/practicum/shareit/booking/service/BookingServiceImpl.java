@@ -105,22 +105,22 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = PageRequest.of(from, size);
         switch (state.toUpperCase()) {
             case "CURRENT":
-                bookings = bookingRepository.findBookingsByItem_OwnerAndStartBeforeAndEndAfterOrderByStartDesc(user, now, now, pageable).getContent();
+                bookings = bookingRepository.findBookingsByItem_OwnerAndStartBeforeAndEndAfterOrderByStartDesc(user, now, now, pageable);
                 break;
             case "PAST":
-                bookings = bookingRepository.findBookingsByItem_OwnerAndEndBeforeOrderByStartDesc(user, now, pageable).getContent();
+                bookings = bookingRepository.findBookingsByItem_OwnerAndEndBeforeOrderByStartDesc(user, now, pageable);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findBookingsByItem_OwnerAndStartAfterOrderByStartDesc(user, now, pageable).getContent();
+                bookings = bookingRepository.findBookingsByItem_OwnerAndStartAfterOrderByStartDesc(user, now, pageable);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findBookingsByItem_OwnerAndStatusOrderByStartDesc(user, Status.WAITING, pageable).getContent();
+                bookings = bookingRepository.findBookingsByItem_OwnerAndStatusOrderByStartDesc(user, Status.WAITING, pageable);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findBookingsByItem_OwnerAndStatusOrderByStartDesc(user, Status.REJECTED, pageable).getContent();
+                bookings = bookingRepository.findBookingsByItem_OwnerAndStatusOrderByStartDesc(user, Status.REJECTED, pageable);
                 break;
             case "ALL":
-                bookings = bookingRepository.findBookingsByItem_OwnerOrderByStartDesc(user, pageable).getContent();
+                bookings = bookingRepository.findBookingsByItem_OwnerOrderByStartDesc(user, pageable);
                 break;
             default:
                 log.warn("Unknown state: " + state);
@@ -138,19 +138,19 @@ public class BookingServiceImpl implements BookingService {
         PageRequest pageable = PageRequest.of(from, size);
         switch (state.toUpperCase()) {
             case "CURRENT":
-                bookings = bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfterOrderByEndDesc(userId, now, now, pageable).getContent();
+                bookings = bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfterOrderByEndDesc(userId, now, now, pageable);
                 break;
             case "PAST":
-                bookings = bookingRepository.findByBookerIdAndEndIsBeforeOrderByStartDesc(userId, now, pageable).getContent();
+                bookings = bookingRepository.findByBookerIdAndEndIsBeforeOrderByStartDesc(userId, now, pageable);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findByBookerIdAndStartIsAfterOrderByStartDesc(userId, now, pageable).getContent();
+                bookings = bookingRepository.findByBookerIdAndStartIsAfterOrderByStartDesc(userId, now, pageable);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findByBookerIdAndStatusOrderByEndDesc(userId, Status.WAITING, pageable).getContent();
+                bookings = bookingRepository.findByBookerIdAndStatusOrderByEndDesc(userId, Status.WAITING, pageable);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findByBookerIdAndStatusOrderByEndDesc(userId, Status.REJECTED, pageable).getContent();
+                bookings = bookingRepository.findByBookerIdAndStatusOrderByEndDesc(userId, Status.REJECTED, pageable);
                 break;
             case "ALL":
                 bookings = bookingRepository.findByBookerIdOrderByEndDesc(userId, pageable);

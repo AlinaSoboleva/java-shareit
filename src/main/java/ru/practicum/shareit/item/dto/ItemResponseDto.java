@@ -8,8 +8,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Builder
 @EqualsAndHashCode
 public class ItemResponseDto extends ItemDto {
 

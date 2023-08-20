@@ -48,7 +48,13 @@ public class ItemMapperImpl {
     public static ItemResponseDto toItemDaoResponse(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
         if (item == null) return null;
 
-        ItemResponseDto itemResponseDto = new ItemResponseDto();
+        ItemResponseDto itemResponseDto = ItemResponseDto.builder()
+                .comments(comments.stream().map(CommentMapper.INSTANCE::toCommentDto).collect(Collectors.toList()))
+                .nextBooking(nextBooking == null ?
+                        null : BookingMapperImpl.toDto(nextBooking))
+                .lastBooking(lastBooking == null ? null :
+                        BookingMapperImpl.toDto(lastBooking))
+                .build();
 
         itemResponseDto.setId(item.getId());
         itemResponseDto.setName(item.getName());
@@ -56,12 +62,6 @@ public class ItemMapperImpl {
         itemResponseDto.setAvailable(item.getAvailable());
         if (item.getRequest() != null)
             itemResponseDto.setRequestId(item.getRequest().getId());
-
-        if (lastBooking != null)
-            itemResponseDto.setLastBooking(BookingMapperImpl.toDto(lastBooking));
-        if (nextBooking != null)
-            itemResponseDto.setNextBooking(BookingMapperImpl.toDto(nextBooking));
-        itemResponseDto.setComments(comments.stream().map(CommentMapper.INSTANCE::toCommentDto).collect(Collectors.toList()));
 
         return itemResponseDto;
     }

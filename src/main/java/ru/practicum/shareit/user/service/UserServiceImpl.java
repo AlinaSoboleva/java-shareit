@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserEmailValidationException;
-import ru.practicum.shareit.user.exception.UserIdValidationException;
 import ru.practicum.shareit.user.mapper.UserMapperImpl;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -29,8 +28,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(Long id) {
-            UserDto userDto = UserMapperImpl.toDto(userRepository.getUserById(id));
-            return userDto;
+        UserDto userDto = UserMapperImpl.toDto(userRepository.getUserById(id));
+        return userDto;
     }
 
     @Override
@@ -67,11 +66,4 @@ public class UserServiceImpl implements UserService {
         userRepository.getUserById(userId);
         userRepository.deleteById(userId);
     }
-
-//    @Override
-//    public User getUserById(Long userId) {
-//        return userRepository.findById(userId).orElseThrow(() ->
-//                new UserIdValidationException(String.format("Пользователь c id: %s не найден", userId)));
-//    }
-
 }

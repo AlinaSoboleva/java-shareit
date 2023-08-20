@@ -7,9 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
@@ -286,13 +283,10 @@ class BookingServiceImplTest {
     @Test
     void getAllBookingsOwners_whenStateIsAll() {
         List<Booking> expectedBookingsList = List.of(new Booking(), new Booking());
-        Page<Booking> expectedBookingsPage = new PageImpl<>(
-                expectedBookingsList, PageRequest.of(0, 1), 2
-        );
 
         when(userRepository.getUserById(anyLong())).thenReturn(new User());
         when(bookingRepository.findBookingsByItem_OwnerOrderByStartDesc(any(User.class), any(Pageable.class)))
-                .thenReturn(expectedBookingsPage);
+                .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
                 .getAllBookingsOwners(userId, "ALL", 0, 1);
@@ -308,13 +302,10 @@ class BookingServiceImplTest {
     @Test
     void getAllBookingsOwners_whenStateIsCurrent() {
         List<Booking> expectedBookingsList = List.of(new Booking(), new Booking());
-        Page<Booking> expectedBookingsPage = new PageImpl<>(
-                expectedBookingsList, PageRequest.of(0, 1), 2
-        );
 
         when(userRepository.getUserById(anyLong())).thenReturn(new User());
         when(bookingRepository.findBookingsByItem_OwnerAndStartBeforeAndEndAfterOrderByStartDesc(any(User.class), any(LocalDateTime.class), any(LocalDateTime.class), any(Pageable.class)))
-                .thenReturn(expectedBookingsPage);
+                .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
                 .getAllBookingsOwners(userId, "CURRENT", 0, 1);
@@ -330,13 +321,10 @@ class BookingServiceImplTest {
     @Test
     void getAllBookingsOwners_whenStateIsPast() {
         List<Booking> expectedBookingsList = List.of(new Booking(), new Booking());
-        Page<Booking> expectedBookingsPage = new PageImpl<>(
-                expectedBookingsList, PageRequest.of(0, 1), 2
-        );
 
         when(userRepository.getUserById(anyLong())).thenReturn(new User());
         when(bookingRepository.findBookingsByItem_OwnerAndEndBeforeOrderByStartDesc(any(User.class), any(LocalDateTime.class), any(Pageable.class)))
-                .thenReturn(expectedBookingsPage);
+                .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
                 .getAllBookingsOwners(userId, "PAST", 0, 1);
@@ -352,13 +340,10 @@ class BookingServiceImplTest {
     @Test
     void getAllBookingsOwners_whenStateIsWaiting() {
         List<Booking> expectedBookingsList = List.of(new Booking(), new Booking());
-        Page<Booking> expectedBookingsPage = new PageImpl<>(
-                expectedBookingsList, PageRequest.of(0, 1), 2
-        );
 
         when(userRepository.getUserById(anyLong())).thenReturn(new User());
         when(bookingRepository.findBookingsByItem_OwnerAndStatusOrderByStartDesc(any(User.class), any(Status.class), any(Pageable.class)))
-                .thenReturn(expectedBookingsPage);
+                .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
                 .getAllBookingsOwners(userId, "WAITING", 0, 1);

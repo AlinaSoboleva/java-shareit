@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
@@ -17,12 +18,14 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class ItemRequestServerImpl implements ItemRequestServer{
 
     private final ItemRequestRepository itemRequestRepository;
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public ItemRequestDto add(ItemRequestDto itemRequestDto, Long userId) {
         User user = userRepository.getUserById(userId);
         ItemRequest itemRequest = ItemRequestMapper.toEntity(itemRequestDto, user);

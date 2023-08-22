@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -11,7 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @NoArgsConstructor
 public class Comment {
     @Id
@@ -21,9 +23,12 @@ public class Comment {
     @Column
     private String text;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
+
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;

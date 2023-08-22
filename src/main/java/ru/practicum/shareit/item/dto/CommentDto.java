@@ -4,20 +4,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode
 public class CommentDto {
-    Long id;
-    @NotNull
+    private Long id;
+
     @NotBlank
-    @NotEmpty
-    String text;
+    @Size(max = 2042)
+    private String text;
 
-    String authorName;
+    private String authorName;
 
-    LocalDateTime created;
+    private LocalDateTime created;
 }

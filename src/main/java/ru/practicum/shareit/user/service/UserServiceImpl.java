@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserEmailValidationException;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@EnableTransactionManagement(proxyTargetClass = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -48,11 +50,11 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(Long userId, UserDto userDto) {
         User user = userRepository.getUserById(userId);
 
-        if (userDto.getName() != null) {
+        if (userDto.getName() != null && !userDto.getName().isEmpty()) {
             user.setName(userDto.getName());
         }
 
-        if (userDto.getEmail() != null) {
+        if (userDto.getEmail() != null && !userDto.getEmail().isEmpty()) {
             user.setEmail(userDto.getEmail());
         }
 
@@ -65,5 +67,6 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         userRepository.getUserById(userId);
         userRepository.deleteById(userId);
+        log.info("Пользователь удален");
     }
 }

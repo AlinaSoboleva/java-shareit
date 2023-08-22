@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @BookingDateValid
 @EqualsAndHashCode
 public class BookingDtoRequest {
+    @NotNull
     private Long itemId;
     @NotNull(message = "дата не может быть пустой")
     @FutureOrPresent

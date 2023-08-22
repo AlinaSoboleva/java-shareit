@@ -10,9 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
+import ru.practicum.shareit.booking.enumeration.State;
 import ru.practicum.shareit.booking.enumeration.Status;
 import ru.practicum.shareit.booking.exception.BookingException;
-import ru.practicum.shareit.booking.exception.BookingStateException;
 import ru.practicum.shareit.booking.exception.BookingValidException;
 import ru.practicum.shareit.booking.mapper.BookingMapperImpl;
 import ru.practicum.shareit.booking.model.Booking;
@@ -33,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import static ru.practicum.shareit.booking.enumeration.State.ALL;
+import static ru.practicum.shareit.booking.enumeration.State.WAITING;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
@@ -289,7 +291,7 @@ class BookingServiceImplTest {
                 .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
-                .getAllBookingsOwners(userId, "ALL", 0, 1);
+                .getAllBookingsOwners(userId, ALL, 0, 1);
 
         assertThat(expectedBookingsList.stream().map(BookingMapperImpl::toBookingDtoResponse).collect(Collectors.toList()),
                 equalTo(actualBookings));
@@ -308,7 +310,7 @@ class BookingServiceImplTest {
                 .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
-                .getAllBookingsOwners(userId, "CURRENT", 0, 1);
+                .getAllBookingsOwners(userId, State.CURRENT, 0, 1);
 
         assertThat(expectedBookingsList.stream().map(BookingMapperImpl::toBookingDtoResponse).collect(Collectors.toList()),
                 equalTo(actualBookings));
@@ -327,7 +329,7 @@ class BookingServiceImplTest {
                 .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
-                .getAllBookingsOwners(userId, "PAST", 0, 1);
+                .getAllBookingsOwners(userId, State.PAST, 0, 1);
 
         assertThat(expectedBookingsList.stream().map(BookingMapperImpl::toBookingDtoResponse).collect(Collectors.toList()),
                 equalTo(actualBookings));
@@ -346,7 +348,7 @@ class BookingServiceImplTest {
                 .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
-                .getAllBookingsOwners(userId, "WAITING", 0, 1);
+                .getAllBookingsOwners(userId, WAITING, 0, 1);
 
         assertThat(expectedBookingsList.stream().map(BookingMapperImpl::toBookingDtoResponse).collect(Collectors.toList()),
                 equalTo(actualBookings));
@@ -354,22 +356,6 @@ class BookingServiceImplTest {
         inOrder.verify(userRepository, times(1)).getUserById(anyLong());
         inOrder.verify(bookingRepository, times(1))
                 .findBookingsByItem_OwnerAndStatusOrderByStartDesc(any(User.class), any(Status.class), any(Pageable.class));
-    }
-
-    @Test
-    void getAllBookingsOwners_whenStateIsNotValid() {
-        String state = "W";
-
-        when(userRepository.getUserById(anyLong())).thenReturn(new User());
-
-        Exception exception = assertThrows(BookingStateException.class, () ->
-                bookingService
-                        .getAllBookingsOwners(userId, state, 0, 1));
-
-        assertThat("Unknown state: " + state,
-                equalTo(exception.getMessage()));
-        InOrder inOrder = inOrder(userRepository);
-        inOrder.verify(userRepository, times(1)).getUserById(anyLong());
     }
 
     @Test
@@ -381,7 +367,7 @@ class BookingServiceImplTest {
                 .thenReturn(expectedBookingsList);
 
         List<BookingDtoResponse> actualBookings = bookingService
-                .getAllBookingsBookers(userId, "ALL", 0, 1);
+                .getAllBookingsBookers(userId, ALL, 0, 1);
 
         assertThat(expectedBookingsList.stream().map(BookingMapperImpl::toBookingDtoResponse).collect(Collectors.toList()),
                 equalTo(actualBookings));
@@ -390,21 +376,5 @@ class BookingServiceImplTest {
         inOrder.verify(bookingRepository, times(1))
                 .findByBookerIdOrderByEndDesc(anyLong(), any(Pageable.class));
 
-    }
-
-    @Test
-    void getAllBookingsBookers_whenStateIsNotValid() {
-        String state = "N";
-
-        when(userRepository.getUserById(anyLong())).thenReturn(new User());
-
-        Exception exception = assertThrows(BookingStateException.class, () ->
-                bookingService
-                        .getAllBookingsBookers(userId, state, 0, 1));
-
-        assertThat("Unknown state: " + state,
-                equalTo(exception.getMessage()));
-        InOrder inOrder = inOrder(userRepository);
-        inOrder.verify(userRepository, times(1)).getUserById(anyLong());
     }
 }

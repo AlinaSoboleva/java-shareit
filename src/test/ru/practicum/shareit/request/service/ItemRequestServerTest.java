@@ -45,7 +45,7 @@ class ItemRequestServerTest {
 
     @BeforeEach
     void setUp() {
-        itemRequestDto = ItemRequestDto.builder().build();
+        itemRequestDto = new ItemRequestDto();
         user = new User();
         user.setId(1l);
     }

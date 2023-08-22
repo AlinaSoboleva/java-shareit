@@ -25,6 +25,7 @@ public class ItemRequest {
     private Long id;
     @Column
     private String description;
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requestor_id", nullable = false)
     private User requestor;
@@ -32,6 +33,7 @@ public class ItemRequest {
     @Column
     private LocalDateTime created;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "request", fetch = FetchType.LAZY)
     private Set<Item> items = new HashSet<>();
 }

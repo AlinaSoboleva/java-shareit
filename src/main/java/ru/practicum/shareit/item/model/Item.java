@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,13 +15,14 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @Entity
 public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner", nullable = false)
     private User owner;
@@ -32,10 +32,9 @@ public class Item {
     private String description;
     @Column(name = "available")
     private Boolean available;
-    //    @OneToOne
-//    @JoinColumn(name = "request_id")
+
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private ItemRequest request;
-
 }

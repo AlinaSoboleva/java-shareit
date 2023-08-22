@@ -1,32 +1,45 @@
 package ru.practicum.shareit.user.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    @InjectMocks
-    private UserController userController;
+    private final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+    @MockBean
     private UserService userService;
     private UserDto userDto;
 
@@ -37,51 +50,120 @@ class UserControllerTest {
 
     @Test
     @DisplayName("Получение всех пользователей")
-    void getAllUsers_whenInvoked_thenResponseStatusOkWithUsersCollectionsInBody() {
-        List<UserDto> userDtos = List.of(userDto);
-        Mockito.when(userService.getAllUsers()).thenReturn(userDtos);
+    void getAllUsers_whenInvoked_thenResponseStatusOkWithUsersCollectionsInBody() throws Exception {
+        List<UserDto> users = List.of(userDto);
+        when(userService.getAllUsers()).thenReturn(users);
 
-        ResponseEntity<List<UserDto>> response = userController.getAllUsers();
+        String result = mockMvc.perform(get("/users")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertThat(response.getBody(), hasSize(userDtos.size()));
-        assertEquals(response.getBody(), userDtos);
+        assertThat(mapper.writeValueAsString(users), equalTo(result));
+        verify(userService, times(1)).getAllUsers();
     }
 
     @Test
     @DisplayName("Сохранение пользователя")
-    void saveUser_whenInvoked_thenResponseStatusOk() {
-        userDto.setId(1l);
-        Mockito.when(userService.saveUser(userDto)).thenReturn(userDto);
+    void saveUser_whenInvoked_thenResponseStatusOk() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setEmail("mail@mail.ru");
+        userDto.setName("Alina");
 
-        ResponseEntity<UserDto> responseUser = userController.saveUser(userDto);
+        when(userService.saveUser(any(UserDto.class))).thenReturn(userDto);
 
-        assertThat(HttpStatus.OK, equalTo(responseUser.getStatusCode()));
-        assertThat(userDto, equalTo(responseUser.getBody()));
+        String result = mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+
+        assertThat(mapper.writeValueAsString(userDto), equalTo(result));
+    }
+
+    @Test
+    void saveUser_whenEmailIsNull_thenResponseStatusBadRequest() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setEmail(null);
+        userDto.setName("Alina");
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void saveUser_whenEmailIsBlank_thenResponseStatusBadRequest() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setEmail("");
+        userDto.setName("Alina");
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void saveUser_whenEmailIsNotValid_thenResponseStatusBadRequest() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setEmail("alina");
+        userDto.setName("Alina");
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void saveUser_whenNameIsNull_thenResponseStatusBadRequest() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setEmail("alina@mail.ru");
+        userDto.setName(null);
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDto)))
+                .andExpect(status().isBadRequest());
     }
 
 
     @Test
     @DisplayName("Получение пользователя")
-    void getById_whenInvoked_thenResponseStatusOk() {
-        userDto.setId(1l);
+    void getById_whenInvoked_thenResponseStatusOk() throws Exception {
         Mockito.when(userService.getById(1l)).thenReturn(userDto);
 
-        ResponseEntity<UserDto> response = userController.getById(1l);
+        String result = mockMvc.perform(get("/users/1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
 
-        assertThat(HttpStatus.OK, equalTo(response.getStatusCode()));
-        assertThat(userDto, equalTo(response.getBody()));
+        assertThat(mapper.writeValueAsString(userDto), equalTo(result));
+        verify(userService, times(1)).getById(anyLong());
     }
 
     @Test
     @DisplayName("Обновление пользователя")
-    void updateUser_whenInvoked() {
-        userDto.setName("Alina");
-        Mockito.when(userService.updateUser(1L, userDto)).thenReturn(userDto);
+    void updateUser_whenInvoked() throws Exception {
 
-        ResponseEntity<UserDto> response = userController.updateUser(1l, userDto);
+        Mockito.when(userService.updateUser(1l, userDto)).thenReturn(userDto);
 
-        assertThat(HttpStatus.OK, equalTo(response.getStatusCode()));
-        assertThat(userDto, equalTo(response.getBody()));
+        mockMvc.perform(patch("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userDto)))
+                .andExpect(status().isOk());
     }
 }

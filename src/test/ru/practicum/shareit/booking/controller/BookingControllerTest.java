@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.practicum.shareit.booking.enumeration.State.ALL;
 
 @ExtendWith(MockitoExtension.class)
 class BookingControllerTest {
@@ -76,9 +77,9 @@ class BookingControllerTest {
     @DisplayName("Получние списка всех бронирований владельца")
     void getAllBookingsOwners() {
         List<BookingDtoResponse> bookingDtoResponses = List.of(bookingDtoResponse);
-        Mockito.when(bookingService.getAllBookingsOwners(1l, "ALL", 0, 10)).thenReturn(bookingDtoResponses);
+        Mockito.when(bookingService.getAllBookingsOwners(1l, ALL, 0, 10)).thenReturn(bookingDtoResponses);
 
-        ResponseEntity<List<BookingDtoResponse>> response = bookingController.getAllBookingsOwners(1l, "ALL", 0, 10);
+        ResponseEntity<List<BookingDtoResponse>> response = bookingController.getAllBookingsOwners(1l, ALL, 0, 10);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertThat(response.getBody(), hasSize(bookingDtoResponses.size()));
@@ -89,9 +90,9 @@ class BookingControllerTest {
     @DisplayName("Получние всех бронирований")
     void getAllBookingsBookers() {
         List<BookingDtoResponse> bookingDtoResponses = List.of(bookingDtoResponse);
-        Mockito.when(bookingService.getAllBookingsOwners(1l, "ALL", 0, 10)).thenReturn(bookingDtoResponses);
+        Mockito.when(bookingService.getAllBookingsOwners(1l, ALL, 0, 10)).thenReturn(bookingDtoResponses);
 
-        ResponseEntity<List<BookingDtoResponse>> response = bookingController.getAllBookingsOwners(1l, "ALL", 0, 10);
+        ResponseEntity<List<BookingDtoResponse>> response = bookingController.getAllBookingsOwners(1l, ALL, 0, 10);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertThat(response.getBody(), hasSize(bookingDtoResponses.size()));

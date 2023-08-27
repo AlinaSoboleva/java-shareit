@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,14 +13,14 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.CommentException;
 import ru.practicum.shareit.item.exception.ItemDoesNotBelongToUserException;
-import ru.practicum.shareit.item.exception.ItemIdValidationException;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapperImpl;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.exception.UserIdValidationException;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -39,12 +41,13 @@ public class ItemServiceImpl implements ItemService {
 
     private final BookingRepository bookingRepository;
 
+    private final ItemRequestRepository itemRequestRepository;
+
 
     @Override
     public ItemDto getById(Long id, Long userId) {
-        userIdValidate(userId);
-        Item item = itemRepository.findById(id).orElseThrow(() ->
-                new ItemIdValidationException(String.format("Предмет с id: %s не найдена", id)));
+        userRepository.getUserById(userId);
+        Item item = itemRepository.getItemById(id);
         Booking nextBooking = null;
         Booking lastBooking = null;
         if (item.getOwner().getId().equals(userId)) {
@@ -56,9 +59,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getItemsByUser(Long userId) {
-        userIdValidate(userId);
-        return itemRepository.findAllItemsByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id"))
+    public List<ItemDto> getItemsByUser(Long userId, Integer from, Integer size) {
+        userRepository.getUserById(userId);
+        Pageable pageable = PageRequest.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+        return itemRepository.findAllItemsByOwnerId(userId, pageable)
                 .stream().map(item ->
                         getById(item.getId(), userId))
                 .collect(Collectors.toList());
@@ -67,21 +71,21 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto saveItem(ItemDto itemDto, Long userId) {
-        User user = userIdValidate(userId);
-        Item item = ItemMapperImpl.toEntity(itemDto, user);
+        User user = userRepository.getUserById(userId);
+        Item item;
+        if (itemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.getItemRequestById(itemDto.getRequestId());
+            item = ItemMapperImpl.toEntity(itemDto, user, itemRequest);
+        } else item = ItemMapperImpl.toEntity(itemDto, user, null);
         return ItemMapperImpl.toDto(itemRepository.save(item));
     }
 
     @Override
     @Transactional
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new ItemIdValidationException(String.format("Предмет с id: %s не найдена", itemId)));
-        userIdValidate(userId);
-        if (!item.getOwner().getId().equals(userId)) {
-            throw new ItemDoesNotBelongToUserException(String.format("Пользователь с id = " + userId +
-                    " не является владельцем вещи: " + itemDto));
-        }
+        Item item = itemRepository.getItemById(itemId);
+        userRepository.getUserById(userId);
+        checkingOwnerTheItem(item, userId);
 
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
@@ -100,37 +104,44 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void deleteItem(Long itemId, Long userId) {
+        Item item = itemRepository.getItemById(itemId);
+        userRepository.getUserById(userId);
+        checkingOwnerTheItem(item, userId);
         itemRepository.deleteById(itemId);
     }
 
-    private User userIdValidate(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-                new UserIdValidationException(String.format("Пользователь с id: %s не найден", userId)));
-    }
 
     @Transactional
     @Override
     public CommentDto postComment(CommentDto commentDto, Long itemId, Long userId) {
-        User user = userIdValidate(userId);
-        Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new ItemIdValidationException(String.format("Предмет с id: %s не найдена", itemId)));
+        User user = userRepository.getUserById(userId);
+        Item item = itemRepository.getItemById(itemId);
         List<Booking> bookings = bookingRepository
                 .findBookingsByBookerAndItemAndEndBeforeAndStatus(user, item, LocalDateTime.now(), Status.APPROVED);
         if (bookings.isEmpty()) {
             throw new CommentException("Пользователь не бронировал данный предмет");
         }
-        commentDto.setCreated(LocalDateTime.now());
+
         Comment comment = CommentMapper.INSTANCE.toComment(commentDto, item, user);
+        comment.setCreated(LocalDateTime.now());
 
         return CommentMapper.INSTANCE.toCommentDto(commentRepository.save(comment));
     }
 
     @Override
-    public List<ItemDto> getItemsSearch(String text, Long userId) {
+    public List<ItemDto> getItemsSearch(String text, Long userId, Integer from, Integer size) {
         if (text.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        return itemRepository.findBySearch(text).stream()
+        Pageable pageable = PageRequest.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+        return itemRepository.findBySearch(text, pageable).stream()
                 .map(ItemMapperImpl::toDto).collect(Collectors.toList());
+    }
+
+    private void checkingOwnerTheItem(Item item, Long userId) {
+        if (!item.getOwner().getId().equals(userId)) {
+            throw new ItemDoesNotBelongToUserException(String.format("Пользователь с id = " + userId +
+                    " не является владельцем вещи: " + item));
+        }
     }
 }

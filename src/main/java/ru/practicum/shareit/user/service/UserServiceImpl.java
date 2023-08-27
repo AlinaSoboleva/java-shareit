@@ -3,10 +3,10 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserEmailValidationException;
-import ru.practicum.shareit.user.exception.UserIdValidationException;
 import ru.practicum.shareit.user.mapper.UserMapperImpl;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@EnableTransactionManagement(proxyTargetClass = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -29,7 +30,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(Long id) {
-        return UserMapperImpl.toDto(getUserById(id));
+        UserDto userDto = UserMapperImpl.toDto(userRepository.getUserById(id));
+        return userDto;
     }
 
     @Override
@@ -46,13 +48,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
-        User user = getUserById(userId);
+        User user = userRepository.getUserById(userId);
 
-        if (userDto.getName() != null) {
+        if (userDto.getName() != null && !userDto.getName().isEmpty()) {
             user.setName(userDto.getName());
         }
 
-        if (userDto.getEmail() != null) {
+        if (userDto.getEmail() != null && !userDto.getEmail().isEmpty()) {
             user.setEmail(userDto.getEmail());
         }
 
@@ -63,13 +65,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long userId) {
+        userRepository.getUserById(userId);
         userRepository.deleteById(userId);
+        log.info("Пользователь удален");
     }
-
-    @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-                new UserIdValidationException(String.format("Пользователь c id: %s не найден", userId)));
-    }
-
 }

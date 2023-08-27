@@ -2,10 +2,11 @@ package ru.practicum.shareit.item.mapper;
 
 import ru.practicum.shareit.booking.mapper.BookingMapperImpl;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.ItemDaoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -23,12 +24,12 @@ public class ItemMapperImpl {
         itemDto.setName(item.getName());
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
-        itemDto.setRequest(item.getRequest() != null ? item.getRequest().getId() : null);
+        itemDto.setRequestId(item.getRequest() != null ? item.getRequest().getId() : null);
 
         return itemDto;
     }
 
-    public static Item toEntity(ItemDto itemDto, User owner) {
+    public static Item toEntity(ItemDto itemDto, User owner, ItemRequest itemRequest) {
         if (itemDto == null) {
             return null;
         }
@@ -39,27 +40,30 @@ public class ItemMapperImpl {
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
+        item.setRequest(itemRequest);
 
         return item;
     }
 
-    public static ItemDaoResponse toItemDaoResponse(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
+    public static ItemResponseDto toItemDaoResponse(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
         if (item == null) return null;
 
-        ItemDaoResponse itemDaoResponse = new ItemDaoResponse();
+        ItemResponseDto itemResponseDto = ItemResponseDto.builder()
+                .comments(comments.stream().map(CommentMapper.INSTANCE::toCommentDto).collect(Collectors.toList()))
+                .nextBooking(nextBooking == null ?
+                        null : BookingMapperImpl.toDto(nextBooking))
+                .lastBooking(lastBooking == null ? null :
+                        BookingMapperImpl.toDto(lastBooking))
+                .build();
 
-        itemDaoResponse.setId(item.getId());
-        itemDaoResponse.setName(item.getName());
-        itemDaoResponse.setDescription(item.getDescription());
-        itemDaoResponse.setAvailable(item.getAvailable());
+        itemResponseDto.setId(item.getId());
+        itemResponseDto.setName(item.getName());
+        itemResponseDto.setDescription(item.getDescription());
+        itemResponseDto.setAvailable(item.getAvailable());
+        if (item.getRequest() != null)
+            itemResponseDto.setRequestId(item.getRequest().getId());
 
-        if (lastBooking != null)
-            itemDaoResponse.setLastBooking(BookingMapperImpl.toDto(lastBooking));
-        if (nextBooking != null)
-            itemDaoResponse.setNextBooking(BookingMapperImpl.toDto(nextBooking));
-        itemDaoResponse.setComments(comments.stream().map(CommentMapper.INSTANCE::toCommentDto).collect(Collectors.toList()));
-
-        return itemDaoResponse;
+        return itemResponseDto;
     }
 
 }

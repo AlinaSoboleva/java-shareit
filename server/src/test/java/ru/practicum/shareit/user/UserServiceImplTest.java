@@ -79,8 +79,8 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Сохранение пользователя")
     void saveUser_whenInvoked() {
-        when(userRepository.save(any(User.class))).
-                thenReturn(UserMapperImpl.toEntity((userDto)));
+        when(userRepository.save(any(User.class)))
+                .thenReturn(UserMapperImpl.toEntity((userDto)));
 
         UserDto actual = userService.saveUser(userDto);
 
@@ -91,8 +91,8 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Сохранение пользователя при возникновении ошибки")
     void saveUser_whenUserNotSave() {
-        when(userRepository.save(any(User.class))).
-                thenThrow(UserEmailValidationException.class);
+        when(userRepository.save(any(User.class)))
+                .thenThrow(UserEmailValidationException.class);
 
         Exception exception = assertThrows(UserEmailValidationException.class, () ->
                 userService.saveUser(userDto));

@@ -53,8 +53,8 @@ class ItemRequestServerTest {
     @Test
     void add() {
         ItemRequest expected = ItemRequestMapper.toEntity(itemRequestDto, user);
-        when(itemRequestRepository.save(any(ItemRequest.class))).
-                thenReturn(expected);
+        when(itemRequestRepository.save(any(ItemRequest.class)))
+                .thenReturn(expected);
         when(userRepository.getUserById(user.getId())).thenReturn(user);
 
         ItemRequestDto actual = itemRequestServer.add(itemRequestDto, user.getId());

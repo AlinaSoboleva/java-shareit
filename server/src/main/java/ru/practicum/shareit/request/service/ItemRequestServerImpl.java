@@ -43,8 +43,8 @@ public class ItemRequestServerImpl implements ItemRequestServer {
     public List<ItemRequestDto> findAll(Long userId, Integer from, Integer size) {
         userRepository.getUserById(userId);
         Sort sortByCreated = Sort.by(Sort.Direction.DESC, "created");
-        return itemRequestRepository.findAllByRequestorIdNot(userId, PageRequest.of(from, size, sortByCreated)).
-                stream().map(ItemRequestMapper::toDto).collect(Collectors.toList());
+        return itemRequestRepository.findAllByRequestorIdNot(userId, PageRequest.of(from, size, sortByCreated))
+                        .stream().map(ItemRequestMapper::toDto).collect(Collectors.toList());
     }
 
     @Override

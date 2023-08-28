@@ -17,7 +17,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "or lower(it.description) like lower(concat('%' , ?1, '%') )) ")
     List<Item> findBySearch(String text, Pageable pageable);
 
-     default Item getItemById(Long itemId){
+    default Item getItemById(Long itemId) {
         return findById(itemId).orElseThrow(() ->
                 new ItemIdValidationException(String.format("Предмет с id: %s не найдена", itemId)));
     }

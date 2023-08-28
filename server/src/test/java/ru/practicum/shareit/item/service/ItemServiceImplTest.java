@@ -64,7 +64,7 @@ class ItemServiceImplTest {
     private ArgumentCaptor<Item> itemCaptor;
 
     private final long itemId = 0L;
-    private final long userId = 0l;
+    private final long userId = 0L;
 
 
     @Test
@@ -263,7 +263,7 @@ class ItemServiceImplTest {
         user.setId(userId);
 
         User anotherUser = new User();
-        user.setId(1l);
+        user.setId(1L);
 
         Item oldItem = new Item();
         oldItem.setName("oldName");

@@ -56,10 +56,10 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Получение пользователя по id, если пользователь существует в базе данных")
     void getById_whenUserFount() {
-        when(userRepository.getUserById(1l)).thenReturn(user);
+        when(userRepository.getUserById(1L)).thenReturn(user);
         UserDto expectedUser = UserMapperImpl.toDto(user);
 
-        UserDto actualUser = userService.getById(1l);
+        UserDto actualUser = userService.getById(1L);
 
         assertThat(expectedUser, equalTo(actualUser));
     }
@@ -67,10 +67,10 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Получение несуществующего пользователя")
     void getById_whenUserNotFount() {
-        when(userRepository.getUserById(1l)).thenThrow(UserIdValidationException.class);
+        when(userRepository.getUserById(1L)).thenThrow(UserIdValidationException.class);
 
         Exception exception = assertThrows(UserIdValidationException.class, () ->
-                userService.getById(1l));
+                userService.getById(1L));
 
         assertThat(UserIdValidationException.class, equalTo(exception.getClass()));
         verify(userRepository, times(1)).getUserById(anyLong());
@@ -106,9 +106,9 @@ class UserServiceImplTest {
         userDto.setName("Alina");
         userDto.setEmail("mail@mail.ru");
         when(userRepository.save(any(User.class))).thenReturn(UserMapperImpl.toEntity(userDto));
-        when(userRepository.getUserById(1l)).thenReturn(user);
+        when(userRepository.getUserById(1L)).thenReturn(user);
 
-        UserDto actual = userService.updateUser(1l, userDto);
+        UserDto actual = userService.updateUser(1L, userDto);
 
         verify(userRepository, times(1)).save(any(User.class));
         assertThat(userDto, equalTo(actual));

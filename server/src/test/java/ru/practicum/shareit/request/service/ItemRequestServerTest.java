@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.exception.UserIdValidationException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +47,7 @@ class ItemRequestServerTest {
     void setUp() {
         itemRequestDto = new ItemRequestDto();
         user = new User();
-        user.setId(1l);
+        user.setId(1L);
     }
 
     @Test
@@ -86,7 +85,7 @@ class ItemRequestServerTest {
         when(userRepository.getUserById(anyLong())).thenThrow(UserIdValidationException.class);
 
         Exception exception = assertThrows(UserIdValidationException.class, () ->
-            itemRequestServer.findAllOwnerRequests(userId)
+                itemRequestServer.findAllOwnerRequests(userId)
         );
 
         assertThat(exception.getClass(), equalTo(UserIdValidationException.class));
@@ -115,7 +114,7 @@ class ItemRequestServerTest {
         when(userRepository.getUserById(anyLong())).thenReturn(user);
         when(itemRequestRepository.getItemRequestById(anyLong())).thenReturn(itemRequest);
 
-        ItemRequestDto actual = itemRequestServer.getRequestById(1l, 1l);
+        ItemRequestDto actual = itemRequestServer.getRequestById(1L, 1L);
 
         assertThat(actual, equalTo(ItemRequestMapper.toDto(itemRequest)));
     }

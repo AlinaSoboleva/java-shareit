@@ -82,7 +82,7 @@ class ItemRepositoryTest {
 
     @Test
     void getItemById_whenItemNotFount() {
-        Long itemId = 0l;
+        Long itemId = 0L;
         Exception exception = assertThrows(ItemIdValidationException.class, () ->
                 itemRepository.getItemById(itemId));
 

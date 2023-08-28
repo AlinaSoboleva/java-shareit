@@ -52,8 +52,8 @@ class BookingServiceImplTest {
     @Mock
     private ItemRepository itemRepository;
 
-    private final Long userId = 0l;
-    private final Long itemId = 0l;
+    private final Long userId = 0L;
+    private final Long itemId = 0L;
     private final Long bookingId = 0L;
 
     @Test
@@ -204,7 +204,7 @@ class BookingServiceImplTest {
     @Test
     void approved_whenUserIsNotOwner() {
         User user = new User();
-        user.setId(1l);
+        user.setId(1L);
         Item item = new Item();
         item.setOwner(user);
         item.setId(itemId);
@@ -264,7 +264,7 @@ class BookingServiceImplTest {
     @Test
     void getBookingById_ifBookingIsNotConnectedWithUser() {
         User user = new User();
-        user.setId(1l);
+        user.setId(1L);
 
         Item item = new Item();
         item.setOwner(user);

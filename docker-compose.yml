@@ -11,6 +11,7 @@ services:
       - server
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
+      - TZ=Europe/Moscow
 
   server:
     build: server

@@ -53,7 +53,6 @@ public class ItemClient extends BaseClient {
         return post("/" + itemId + "/comment", userId, commentDto);
     }
 
-
     public ResponseEntity<Object> saveItem(ItemDto item, long userId) {
         return post("", userId, item);
     }

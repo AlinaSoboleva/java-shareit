@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.State;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+
+import static ru.practicum.shareit.util.RequestHeaders.X_SHARER_USER_ID;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getAllBookingsByUser(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(X_SHARER_USER_ID) Long userId,
             @RequestParam(name = "state", defaultValue = "ALL") State state,
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -46,7 +47,7 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBookingById(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(X_SHARER_USER_ID) Long userId,
             @PathVariable Long bookingId) {
         log.info("Получено бронирование с id = {}, userId={}.", bookingId, userId);
         return bookingClient.getBooking(userId, bookingId);
@@ -54,15 +55,15 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> saveBooking(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @Valid @RequestBody BookingDtoRequest bookingDtoRequest) {
+            @RequestHeader(X_SHARER_USER_ID) Long userId,
+            @RequestBody BookingDtoRequest bookingDtoRequest) {
         log.info("Добавлен новый запрос на бронирование: {}, userId={}.", bookingDtoRequest, userId);
         return bookingClient.saveBooking(userId, bookingDtoRequest);
     }
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> updateBooking(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(X_SHARER_USER_ID) Long userId,
             @PathVariable Long bookingId, @RequestParam Boolean approved) {
         log.info("Обновлено бронирование с id = {}, userId={}, approved = {}.", bookingId, userId, approved);
         return bookingClient.updateBooking(userId, bookingId, approved);

@@ -18,15 +18,14 @@ public class BookingDtoRequest {
     private Long id;
 
     @NotNull
+    private Long itemId;
+    @NotNull(message = "дата не может быть пустой")
     @FutureOrPresent
     private LocalDateTime start;
 
-    @NotNull
     @FutureOrPresent
+    @NotNull(message = "дата не может быть пустой")
     private LocalDateTime end;
-
-    @NotNull
-    private Long itemId;
 
     private UserDto booker;
 

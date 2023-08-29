@@ -16,4 +16,11 @@ public class ErrorHandler {
         log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
         return new ErrorResponse("Unknown state: " + e.getValue());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAllException(final Throwable e) {
+        log.debug("Получен статус 400 Internal server error {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
 }

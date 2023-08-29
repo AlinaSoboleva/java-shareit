@@ -14,6 +14,7 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class UserController {
 
     private final UserClient userClient;
@@ -31,7 +32,6 @@ public class UserController {
     }
 
     @PostMapping
-    @Validated
     public ResponseEntity<Object> saveUser(@Valid @RequestBody UserDto userDto) {
         log.info("Сохранение пользователя {}", userDto);
         return userClient.saveUser(userDto);

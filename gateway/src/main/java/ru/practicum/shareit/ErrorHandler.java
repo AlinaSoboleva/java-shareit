@@ -17,10 +17,13 @@ public class ErrorHandler {
         return new ErrorResponse("Unknown state: " + e.getValue());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleAllException(final Throwable e) {
-        log.debug("Получен статус 400 Internal server error {}", e.getMessage(), e);
-        return new ErrorResponse(e.getMessage());
-    }
+/*    Создала, но с ним тесты валятся, потому что ловится ошибка
+    валидации и вместо кода 400 возвращается 500*/
+
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ErrorResponse handleAllException(final Throwable e) {
+//        log.debug("Получен статус 400 Internal server error {}", e.getMessage(), e);
+//        return new ErrorResponse(e.getMessage());
+//    }
 }

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.State;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -57,7 +56,7 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<Object> saveBooking(
             @RequestHeader(X_SHARER_USER_ID) Long userId,
-            @RequestBody @Valid BookingDtoRequest bookingDtoRequest) {
+            @RequestBody BookingDtoRequest bookingDtoRequest) {
         log.info("Добавлен новый запрос на бронирование: {}, userId={}.", bookingDtoRequest, userId);
         return bookingClient.saveBooking(userId, bookingDtoRequest);
     }

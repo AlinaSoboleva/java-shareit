@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.enumeration.State;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -21,7 +19,6 @@ import static ru.practicum.shareit.util.RequestHeaders.X_SHARER_USER_ID;
 @Controller
 @AllArgsConstructor
 @RequestMapping(path = "/bookings")
-@Validated
 public class BookingController {
 
     private final BookingService bookingService;
@@ -32,7 +29,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<BookingDtoResponse> save(@Valid @RequestBody BookingDtoRequest bookingDtoRequest, @RequestHeader(X_SHARER_USER_ID) Long userId) {
+    public ResponseEntity<BookingDtoResponse> save(@RequestBody BookingDtoRequest bookingDtoRequest, @RequestHeader(X_SHARER_USER_ID) Long userId) {
         return new ResponseEntity<>(bookingService.saveBooking(bookingDtoRequest, userId), HttpStatus.OK);
     }
 

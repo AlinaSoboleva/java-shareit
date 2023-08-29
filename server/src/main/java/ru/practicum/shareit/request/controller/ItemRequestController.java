@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestServer;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -23,7 +22,7 @@ public class ItemRequestController {
     private final ItemRequestServer itemRequestServer;
 
     @PostMapping
-    ResponseEntity<ItemRequestDto> add(@RequestBody @Valid ItemRequestDto itemRequestDto,
+    ResponseEntity<ItemRequestDto> add(@RequestBody ItemRequestDto itemRequestDto,
                                        @RequestHeader(X_SHARER_USER_ID) Long userId) {
         return ResponseEntity.ok(itemRequestServer.add(itemRequestDto, userId));
     }

@@ -8,13 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @Slf4j
 @RequestMapping(path = "/users")
-@Validated
 public class UserController {
 
     private final UserService userService;
@@ -37,7 +35,7 @@ public class UserController {
 
     @PostMapping
     @Validated
-    public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto) {
         log.info("Сохранение пользователя {}", userDto);
         return ResponseEntity.ok(userService.saveUser(userDto));
     }

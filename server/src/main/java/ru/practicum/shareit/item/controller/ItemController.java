@@ -4,13 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -20,7 +18,6 @@ import static ru.practicum.shareit.util.RequestHeaders.X_SHARER_USER_ID;
 @Slf4j
 @Controller
 @RequestMapping("/items")
-@Validated
 public class ItemController {
 
     private final ItemService itemService;
@@ -53,12 +50,12 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<CommentDto> postComment(@Valid @RequestBody CommentDto commentDto, @PathVariable Long itemId, @RequestHeader(X_SHARER_USER_ID) Long userId) {
+    public ResponseEntity<CommentDto> postComment(@RequestBody CommentDto commentDto, @PathVariable Long itemId, @RequestHeader(X_SHARER_USER_ID) Long userId) {
         return new ResponseEntity<>(itemService.postComment(commentDto, itemId, userId), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<ItemDto> saveItem(@Valid @RequestBody ItemDto item,
+    public ResponseEntity<ItemDto> saveItem(@RequestBody ItemDto item,
                                             @RequestHeader(X_SHARER_USER_ID) long userId) {
         log.info("Сохранение предмета {} пользователя с id {}", item, userId);
         return ResponseEntity.ok(itemService.saveItem(item, userId));

@@ -9,7 +9,7 @@ services:
       - "8081:8081"
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
-      - TZ=Europe/Moscow
+#      - TZ=Europe/Moscow
 
   server:
     build: server

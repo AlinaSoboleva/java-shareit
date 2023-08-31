@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +36,8 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> getItemsSearch(@RequestParam String text,
                                                         @RequestHeader(X_SHARER_USER_ID) Long userId,
-                                                        @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size) {
+                                                        @RequestParam(defaultValue = "0") Integer from,
+                                                        @RequestParam(defaultValue = "10") Integer size) {
         log.info("Поиск вещей: {}", text);
         return ResponseEntity.ok(itemService.getItemsSearch(text, userId, from, size));
     }
@@ -46,12 +45,12 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> getById(@PathVariable Long itemId, @RequestHeader(X_SHARER_USER_ID) Long userId) {
-        return new ResponseEntity<>(itemService.getById(itemId, userId), HttpStatus.OK);
+        return ResponseEntity.ok(itemService.getById(itemId, userId));
     }
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<CommentDto> postComment(@RequestBody CommentDto commentDto, @PathVariable Long itemId, @RequestHeader(X_SHARER_USER_ID) Long userId) {
-        return new ResponseEntity<>(itemService.postComment(commentDto, itemId, userId), HttpStatus.OK);
+        return ResponseEntity.ok(itemService.postComment(commentDto, itemId, userId));
     }
 
     @PostMapping
@@ -65,7 +64,7 @@ public class ItemController {
     public ResponseEntity<ItemDto> updateItem(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
                                               @RequestHeader(X_SHARER_USER_ID) Long userId) {
         log.info("Изменение предмета с id {} у пользователя {}", itemId, userId);
-        return new ResponseEntity<>(itemService.updateItem(itemDto, itemId, userId), HttpStatus.OK);
+        return ResponseEntity.ok(itemService.updateItem(itemDto, itemId, userId));
     }
 
     @DeleteMapping("/{itemId}")

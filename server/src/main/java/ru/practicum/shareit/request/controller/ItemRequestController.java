@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestServer;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 import static ru.practicum.shareit.util.RequestHeaders.X_SHARER_USER_ID;
@@ -35,8 +33,8 @@ public class ItemRequestController {
     @GetMapping("/all")
     @Validated
     ResponseEntity<List<ItemRequestDto>> findAll(@RequestHeader(X_SHARER_USER_ID) Long userId,
-                                                 @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                 @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer size) {
+                                                 @RequestParam(defaultValue = "0") Integer from,
+                                                 @RequestParam(defaultValue = "10") Integer size) {
         return ResponseEntity.ok(itemRequestServer.findAll(userId, from, size));
     }
 
